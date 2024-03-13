@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.example.basiccrud.model.Product;
 import br.com.example.basiccrud.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,8 +27,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+    public Product findById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isEmpty()) {
+            throw new EntityNotFoundException("Product not found with id " + id);
+        }
+        return product.get();
     }
 
     @Override

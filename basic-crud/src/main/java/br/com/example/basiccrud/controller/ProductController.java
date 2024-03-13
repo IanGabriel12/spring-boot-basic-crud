@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.example.basiccrud.model.Product;
+import br.com.example.basiccrud.model.dto.ProductDto;
+import br.com.example.basiccrud.model.dto.ProductUpdateDto;
 import br.com.example.basiccrud.service.ProductService;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,13 +41,13 @@ public class ProductController {
     }
     
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(product));
+    public ResponseEntity<Product> create(@Valid @RequestBody ProductDto productDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDto.toProduct()));
     }
 
     @PutMapping
-    public ResponseEntity<Product> update(@RequestBody Product product) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.update(product));
+    public ResponseEntity<Product> update(@Valid @RequestBody ProductUpdateDto productDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.update(productDto.toProduct()));
     }
 
     @DeleteMapping("/{id}")

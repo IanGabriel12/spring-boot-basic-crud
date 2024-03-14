@@ -1,7 +1,6 @@
 package br.com.example.basiccrud.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import br.com.example.basiccrud.model.Product;
 

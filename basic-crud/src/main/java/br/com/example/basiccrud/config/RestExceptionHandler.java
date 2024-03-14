@@ -1,7 +1,6 @@
 package br.com.example.basiccrud.config;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

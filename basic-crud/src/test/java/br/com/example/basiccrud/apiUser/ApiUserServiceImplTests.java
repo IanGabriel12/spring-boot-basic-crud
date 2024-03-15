@@ -3,7 +3,6 @@ package br.com.example.basiccrud.apiUser;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -22,26 +21,27 @@ import br.com.example.basiccrud.service.ApiUserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 
 @SpringBootTest
-public class ApiUserServiceImplTest {
+public class ApiUserServiceImplTests {
     @Autowired
-    ApiUserServiceImpl apiUserService;
+    private ApiUserServiceImpl apiUserService;
 
     @MockBean
-    ApiUserRepository apiUserRepository;
+    private ApiUserRepository apiUserRepository;
 
-    ApiUser apiUser;
+    private ApiUser apiUser;
 
     @BeforeEach
-    private void setUp() {
+    public void setUp() throws Exception {
         apiUser = new ApiUser();
-        Address address = new Address("89999-000", "R. teste", "Centro", "Natal", "RN");
+        Address address = new Address("89999-000", "R. teste", "Centro", "Natal", "RN", 85L);
         apiUser.setName("Ian Gabriel");
         apiUser.setPhoneNumber("(99) 99999-9999");
         apiUser.setAddress(address);
     }
 
+    @SuppressWarnings("null")
     @Test
-    private void shouldSaveUser() {
+    public void shouldSaveUser() {
         Mockito.when(apiUserRepository.save(apiUser)).thenReturn(new ApiUser(
             1L,
             apiUser.getName(),
@@ -53,9 +53,10 @@ public class ApiUserServiceImplTest {
     }
 
     @Test
-    private void shouldUpdateUser() {
+    public void shouldUpdateUser() {
         apiUser.setId(1L);
         apiUser.setName("Editado");
+        Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.of(apiUser));
         Mockito.when(apiUserRepository.save(apiUser)).thenReturn(new ApiUser(
             1L,
             apiUser.getName(),
@@ -63,12 +64,12 @@ public class ApiUserServiceImplTest {
             apiUser.getAddress()
         ));
 
-        ApiUser userReturned = apiUserService.save(apiUser);
+        ApiUser userReturned = apiUserService.update(apiUser);
         assertEquals(apiUser, userReturned);
     }
 
     @Test
-    private void shouldFindAll() {
+    public void shouldFindAll() {
         ArrayList<ApiUser> list = new ArrayList<>();
         list.add(apiUser);
         list.add(apiUser);
@@ -78,32 +79,33 @@ public class ApiUserServiceImplTest {
 
 
     @Test
-    private void shouldFindById() {
+    public void shouldFindById() {
         Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.of(apiUser));
         assertEquals(apiUserService.findById(1L), apiUser);
     }
 
     @Test
-    private void shouldDeteleById() {
+    public void shouldDeteleById() {
+        Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.of(apiUser));
         Mockito.doNothing().when(apiUserRepository).deleteById(1L);
         assertDoesNotThrow(() -> apiUserService.deleteById(1L));
     }
 
     @Test
-    private void findByIdShouldThrowWhenNotFound() {
+    public void findByIdShouldThrowWhenNotFound() {
         Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> apiUserService.findById(1L));
     }
 
     @Test
-    private void updateShouldThrowWhenNotFound() {
+    public void updateShouldThrowWhenNotFound() {
         apiUser.setId(1L);
         Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> apiUserService.update(apiUser));
     }
 
     @Test
-    private void deleteShouldThrowWhenNotFound() {
+    public void deleteShouldThrowWhenNotFound() {
         Mockito.when(apiUserRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> apiUserService.deleteById(1L));
     }

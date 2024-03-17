@@ -35,8 +35,7 @@ public class ApiUser {
     private Address address;
 
     @JsonIgnore
-    @OneToMany
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "user")
     private List<Purchase> purchases;
 
     public ApiUser(Long id, String name, String phoneNumber, Address address) {
